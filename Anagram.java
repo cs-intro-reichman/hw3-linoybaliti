@@ -28,24 +28,35 @@ public class Anagram {
 
 	// Returns true if the two given strings are anagrams, false otherwise.
 	public static boolean isAnagram(String str1, String str2) {
-		str1 = preProcess(str1); // ניקוי
-		str2 = preProcess(str2); // ניקוי
-		boolean Answer = false;
-		
-		if (str1.length() != str2.length()){
-			return false;
-		}
-		for (int i=0;i<str1.length();i++){
-			for(int j=0;j<str1.length();j++){
-				if(str1.charAt(i) == str2.charAt(j) ){
-					// פה נתקעתי כי אני רוצה להשמיד את התווים שמצאתי מ 2 המערכים בעצם ליצור חדש כי זה סטרינג
-				}
-				else {
-					// return false;
-				}
-			}
-		}
-		return Answer;
+		str1 = preProcess(str1);
+    str2 = preProcess(str2);
+
+    if (str1.length() != str2.length()) {
+        return false;
+    }
+    
+    // יוצרים מערך בגודל 26 (לאותיות a-z)
+    int[] counts = new int[26];
+
+    // שלב 1: סופרים את התווים ב-str1
+    for (int i = 0; i < str1.length(); i++) {
+        // 'a' - 'a' = 0; 'b' - 'a' = 1, וכו'.
+        counts[str1.charAt(i) - 'a']++; 
+    }
+
+    // שלב 2: מפחיתים את התווים מ-str2
+    for (int i = 0; i < str2.length(); i++) {
+        counts[str2.charAt(i) - 'a']--;
+    }
+
+    // שלב 3: אם יש ספירה שאינה 0, יש חוסר התאמה
+    for (int count : counts) {
+        if (count != 0) {
+            return false;
+        }
+    }
+    
+    return true;
 	}
 		
 	// Returns a preprocessed version of the given string: all the letter characters are converted
@@ -74,13 +85,20 @@ public class Anagram {
 	// characters as the given string, re-arranged in a random order. 
 	public static String randomAnagram(String str) {
 		// Replace the following statement with your code
-		str = preProcess(str); // יעבוד אחרי שפרי פרוסס יעבוד 
-		String NewStr = ""; // הגדרת מערך חדש
-		for (int i=0; i<str.length(); i++){
-			int rand = (int) (Math.random() *str.length() -1) ;
-			NewStr = NewStr + str.charAt(rand); // += להכניס את האות במיקום הרנדום למערך החדש שיצרתי
-			str = str.substring(0,rand) + str.substring(rand +1,str.length()); // עדכון הסטירנג המקורי
-		} 
-		return NewStr;
+		str = preProcess(str); 
+    char[] arr = str.toCharArray();
+    int n = arr.length;
+    if (n == 0) {
+        return "";
+    }
+    StringBuilder newStr = new StringBuilder();
+    int currentLength = n;
+    for (int i = 0; i < n; i++) {
+        int randIndex = (int) (Math.random() * currentLength); 
+        newStr.append(arr[randIndex]);
+        arr[randIndex] = arr[currentLength - 1];
+        currentLength--;
+    } 
+    return newStr.toString();
 	}
 }
